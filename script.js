@@ -1,7 +1,8 @@
 const words = ["apple", "banana", "cherry", "date", "elderberry", "fig", "grape", "honeydew"];
 let currentWord = '';
 let currentIndex = 0;
-let correctWordsCount = 0; // Изменено на правильное количество слов
+let correctWordsCount = 0;
+let incorrectWordsCount = 0;
 let mistakesInWord = 0;
 let timerInterval;
 let seconds = 0;
@@ -12,17 +13,17 @@ const wrongCountElement = document.querySelector('.wrong-count');
 const mistakesElement = document.querySelector('.word-mistakes');
 const timerElement = document.getElementById('timer');
 
-// Функция для запуска таймера
+
 function startTimer() {
     timerInterval = setInterval(() => {
         seconds++;
         const minutes = String(Math.floor(seconds / 60)).padStart(2, '0');
         const secs = String(seconds % 60).padStart(2, '0');
-        timerElement.textContent = `${ minutes }: ${ secs }`;
+        timerElement.textContent = `${minutes}:${secs}`;
     }, 1000);
 }
 
-// Функция для сброса игры
+
 function resetGame() {
     currentIndex = 0;
     mistakesInWord = 0;
@@ -30,7 +31,7 @@ function resetGame() {
     setNewWord();
 }
 
-// Функция для установки нового слова
+
 function setNewWord() {
     currentWord = words[Math.floor(Math.random() * words.length)];
     wordElement.innerHTML = '';
@@ -43,23 +44,22 @@ function setNewWord() {
     currentIndex = 0;
 }
 
-// Функция для обработки нажатий клавиш
+
 function handleKeyPress(event) {
     const keyPressed = event.key.toLowerCase();
     const currentChar = currentWord[currentIndex];
 
     if (keyPressed === currentChar) {
-        // Правильный ввод
+
         const spans = wordElement.querySelectorAll('span');
-        spans[currentIndex].classList.add('c'); // Окрасить в зеленый
+        spans[currentIndex].classList.add('c');
         currentIndex++;
 
-        // Если все символы введены правильно
-        if (currentIndex === currentWord.length) {
-            correctWordsCount++; // Увеличиваем количество правильно введенных слов
-            correctCountElement.textContent = correctWordsCount; // Обновляем отображение
-            resetGame(); // Устанавливаем новое слово
 
+        if (currentIndex === currentWord.length) {
+            correctWordsCount++;
+            correctCountElement.textContent = correctWordsCount;
+            resetGame();
             if (correctWordsCount === 5) {
                 alert("Вы выиграли!");
                 resetGame();
@@ -67,16 +67,23 @@ function handleKeyPress(event) {
         }
 
     } else {
-        // Неправильный ввод
+
         mistakesInWord++;
         mistakesElement.textContent = mistakesInWord;
         const spans = wordElement.querySelectorAll('span');
-        spans[currentIndex].classList.add('w'); // Окрасить в красный
-        // Текущий символ остается для повторного ввода
+        spans[currentIndex].classList.add('w');
+
+
+
+        if (currentIndex === currentWord.length - 1) {
+            incorrectWordsCount++;
+            wrongCountElement.textContent = incorrectWordsCount;
+            resetGame();
+        }
     }
 }
 
-// Запуск игры при загрузке страницы
+
 document.addEventListener('DOMContentLoaded', () => {
     resetGame();
     startTimer();
