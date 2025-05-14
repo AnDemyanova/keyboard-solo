@@ -13,24 +13,22 @@ const wrongCountElement = document.querySelector('.wrong-count');
 const mistakesElement = document.querySelector('.word-mistakes');
 const timerElement = document.getElementById('timer');
 
-
 function startTimer() {
     timerInterval = setInterval(() => {
         seconds++;
         const minutes = String(Math.floor(seconds / 60)).padStart(2, '0');
         const secs = String(seconds % 60).padStart(2, '0');
-        timerElement.textContent = `${minutes}:${secs}`;
+        timerElement.textContent = `${minutes} : ${secs}`;
     }, 1000);
 }
 
-
 function resetGame() {
+    checkCounters();
     currentIndex = 0;
     mistakesInWord = 0;
     mistakesElement.textContent = mistakesInWord;
     setNewWord();
 }
-
 
 function setNewWord() {
     currentWord = words[Math.floor(Math.random() * words.length)];
@@ -44,45 +42,45 @@ function setNewWord() {
     currentIndex = 0;
 }
 
-
 function handleKeyPress(event) {
     const keyPressed = event.key.toLowerCase();
     const currentChar = currentWord[currentIndex];
+    const spans = wordElement.querySelectorAll('span');
 
     if (keyPressed === currentChar) {
-
-        const spans = wordElement.querySelectorAll('span');
+        spans[currentIndex].classList.remove('w');
         spans[currentIndex].classList.add('c');
         currentIndex++;
 
-
         if (currentIndex === currentWord.length) {
-            correctWordsCount++;
-            correctCountElement.textContent = correctWordsCount;
-            resetGame();
-            if (correctWordsCount === 5) {
-                alert("Вы выиграли!");
-                resetGame();
+
+            if (mistakesInWord > 0) {
+                incorrectWordsCount++;
+                wrongCountElement.textContent = incorrectWordsCount;
+            } else {
+
+                correctWordsCount++;
+                correctCountElement.textContent = correctWordsCount;
             }
+
+            setTimeout(resetGame, 0);
         }
-
     } else {
-
         mistakesInWord++;
         mistakesElement.textContent = mistakesInWord;
-        const spans = wordElement.querySelectorAll('span');
         spans[currentIndex].classList.add('w');
-
-
-
-        if (currentIndex === currentWord.length - 1) {
-            incorrectWordsCount++;
-            wrongCountElement.textContent = incorrectWordsCount;
-            resetGame();
-        }
     }
 }
 
+function checkCounters() {
+    if (correctWordsCount >= 5) {
+        alert("Вы выиграли!");
+        resetGame();
+    } else if (incorrectWordsCount >= 5) {
+        alert("Вы проиграли!");
+        resetGame();
+    }
+}
 
 document.addEventListener('DOMContentLoaded', () => {
     resetGame();
